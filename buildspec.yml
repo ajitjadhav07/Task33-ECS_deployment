@@ -9,15 +9,17 @@ phases:
   build:
     commands:
       - echo Building the Docker image...
-      - docker build -t my-app .
+      # Use public ECR Node.js image to avoid Docker Hub rate limit
+      - docker build -t my-app --build-arg BASE_IMAGE=public.ecr.aws/docker/library/node:16 .
       - docker tag my-app:latest 989615686095.dkr.ecr.ap-south-1.amazonaws.com/my-app:latest
 
   post_build:
     commands:
-      - echo Pushing the Docker image...
+      - echo Pushing the Docker image to ECR...
       - docker push 989615686095.dkr.ecr.ap-south-1.amazonaws.com/my-app:latest
       - echo Writing imagedefinitions.json file...
-      - printf '[{"name":"my-app","imageUri":"%s"}]' 989615686095.dkr.ecr.ap-south-1.amazonaws.com/my-app:latest > imagedefinitions.json
+      # Match ECS container name exactly
+      - printf '[{"name":"task-33-container","imageUri":"%s"}]' 989615686095.dkr.ecr.ap-south-1.amazonaws.com/my-app:latest > imagedefinitions.json
 
 artifacts:
   files:
