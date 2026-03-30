@@ -1,4 +1,4 @@
-FROM public.ecr.aws/nodejs/node:16
+FROM public.ecr.aws/docker/library/node:16
 
 WORKDIR /app
 
